@@ -1,4 +1,3 @@
-/*
 package SlRenderer;
 
 import org.joml.Vector3f;
@@ -9,15 +8,16 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static SlRenderer.slTilesManager.MU;
+import static csc133.spot.*;
 import static org.lwjgl.opengl.ARBVertexArrayObject.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class slDrawablesManager {
 
     private final Vector3f my_camera_location = new Vector3f(0, 0, 0.0f);
-    private final slTilesManager board_manager;
-    private final float [] vertexArray;
-    private final int[] vertexIndexArray;
+    private final slTilesManager board_manager = new slTilesManager(TOTAL_MINES);
+    private final float [] vertexArray = board_manager.getVertexArray();
+    private final int[] vertexIndexArray = board_manager.getVertexIndicesArray();
 
     public slDrawablesManager(int num_mines) {
         
@@ -40,9 +40,8 @@ public class slDrawablesManager {
         //    glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
         }
 
-        
-        glDrawElements(GL_TRIANGLES, vertexIndexArray.length, GL_UNSIGNED_INT, 0);
+
+        // TODO: UNCOMMENT glDrawElements(GL_TRIANGLES, vertexIndexArray.length, GL_UNSIGNED_INT, 0);
     }  //  public void update(int row, int col)
 
 }
- */
