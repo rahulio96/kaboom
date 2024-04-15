@@ -60,11 +60,7 @@ public class slTilesManager {
 
     // Call fillSquarecoordinates for each cell array
     private void setVertexArray() {
-        verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
-       
-
-
-
+        // TODO: UNCOMMENT verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
 
 
     }  // float[] setVertexArray(...)
