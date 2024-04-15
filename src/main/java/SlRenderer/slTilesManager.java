@@ -157,8 +157,17 @@ public class slTilesManager {
     }
 
     public void printMineSweeperArray() {
-        
+        // Keep track of num of rows, new line if = num rows
+        int row_count = 0;
 
+        for (int i = 0; i < cellStatusArray.length; i++) {
+            if (row_count >= NUM_POLY_ROWS) {
+                row_count = 0;
+                System.out.println();
+            }
+            System.out.print(cellStatusArray[i]);
+            row_count++;
+        }
 
 
     }  //  public void printMineSweeperArray()
@@ -176,7 +185,8 @@ public class slTilesManager {
 
 
 
-        return retVec.set(NUM_POLY_ROWS-1-row, col);
+        // return retVec.set(NUM_POLY_ROWS-1-row, col); TODO: UNDO THIS COMMENT!
+        return null; // TODO: DELETE THIS LATER, THIS IS TEMPORARY!!!
     }
 
 }  //  public class slGeometryManager
