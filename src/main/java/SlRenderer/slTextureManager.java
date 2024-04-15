@@ -1,8 +1,8 @@
-package SlRenderer;
 /*
-TODO:
-Make this a generic class with separate init_texture() for 2D textures.
- */
+package SlRenderer;
+
+// TODO:
+// Make this a generic class with separate init_texture() for 2D textures.
 
 import org.lwjgl.BufferUtils;
 
@@ -75,3 +75,5 @@ class slTextureManager implements  TextureManagerInterface {
     }
 
 }
+
+*/
