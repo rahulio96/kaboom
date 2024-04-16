@@ -39,8 +39,7 @@ public class slWindow {
     }
 
     public void run(int num_mines) {
-        // TODO: UNCOMMENT THIS
-        // print_legalese();
+        print_legalese();
         init(num_mines);
         loop();
 

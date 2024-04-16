@@ -8,4 +8,7 @@ public class spot {
     public static float FRUSTUM_LEFT = 0.0f, FRUSTUM_RIGHT = (float) WIN_WIDTH, FRUSTUM_BOTTOM = 0.0f,
             FRUSTUM_TOP = (float) WIN_HEIGHT, Z_NEAR = 0.0f, Z_FAR = 10.0f;
     public static int TOTAL_MINES = 4;
+    public static void print_legalese() {
+        System.out.println("Legal Stuff");
+    }
 }
