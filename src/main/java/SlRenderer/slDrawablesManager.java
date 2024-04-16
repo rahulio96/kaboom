@@ -18,15 +18,8 @@ public class slDrawablesManager {
     private slCamera my_camera;
     private final slTilesManager board_manager = new slTilesManager(TOTAL_MINES);
 
-    float xmin = POLY_OFFSET, ymin = POLY_OFFSET, zmin = 0.0f, xmax = xmin + POLY_LENGTH, ymax = ymin + POLY_LENGTH; // TODO: TEMP
-    float uvmin = 0.0f, uvmax = 1.0f; // TODO: TEMP
-
-    // TODO: CHANGE BOTH VERTEX AND INDICES!!
-    private final float [] vertexArray = new float[]{            xmin, ymin, zmin, 1.0f, 1.0f, 0.0f, 1.0f, uvmin, uvmax, // 0,1
-            xmax, ymin, zmin, 1.0f, 1.0f, 0.0f, 1.0f, uvmax, uvmax, // 1,1
-            xmax, ymax, zmin, 1.0f, 1.0f, 0.0f, 1.0f, uvmax, uvmin, // 1,0
-            xmin, ymax, zmin, 1.0f, 1.0f, 0.0f, 1.0f, uvmin, uvmin};  // 0,0};
-    private final int[] vertexIndexArray = new int[]{0, 1, 2, 0, 2, 3};
+    private final float [] vertexArray = board_manager.getVertexArray();
+    private final int[] vertexIndexArray = board_manager.getVertexIndicesArray();
     private slShaderManager shader;
     private int vaoID, vboID, eboID;
     private final int vpoIndex = 0, vcoIndex = 1, vtoIndex = 2;
