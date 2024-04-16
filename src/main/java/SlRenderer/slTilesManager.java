@@ -62,7 +62,8 @@ public class slTilesManager {
     // Call fillSquarecoordinates for each cell array
     private void setVertexArray() {
         verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
-        float xmin = POLY_OFFSET, ymax = WIN_HEIGHT - POLY_OFFSET, zmin = 0.0f, zmax = 0.0f, xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
+        float xmin = POLY_OFFSET, ymax = WIN_HEIGHT - POLY_OFFSET, zmin = 0.0f, zmax = 0.0f,
+                xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
         float uvmin = 0.0f, uvmax = 1.0f;
 
         int index = 0;
@@ -70,19 +71,21 @@ public class slTilesManager {
         int uv_counter = 0;
         float[] xyz_coords = {xmin,ymin,zmin, xmax,ymin,zmin, xmax,ymax,zmax, xmin,ymax,zmax};
         float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
-        float[] uv_coords = {uvmin,uvmax, uvmax,uvmin, uvmax,uvmax, uvmin,uvmax};
+        float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
 
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
+
                 for (float xyz_coordinate : xyz_coords) {
                     if (color_counter == 3) {
                         color_counter = 0;
                         for (float color : vs_colors) {
                             verticesArray[index++] = color;
                         }
-                        verticesArray[index++] = uv_coords[uv_counter];
+
                         verticesArray[index++] = uv_coords[uv_counter++];
-                        uv_counter++;
+                        verticesArray[index++] = uv_coords[uv_counter++];
+
                         if (uv_counter >= uv_coords.length) {
                             uv_counter = 0;
                         }
