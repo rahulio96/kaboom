@@ -11,9 +11,6 @@ public class slTilesManager {
     private float[] verticesArray;
     private int[] vertexIndicesArray;
 
-    private final int vps = 4; // Vertices Per Square
-    private final int fpv = 9;  // Vertices Per Vertex
-
     // 0 <-- gold & unexposed; GU, 1 <-- gold & exposed; GE,
     // 2 <-- mine & unexposed; MU, 3 <-- mine & exposed; ME.
     public static final int GU = 0;
@@ -61,11 +58,45 @@ public class slTilesManager {
     // Call fillSquarecoordinates for each cell array
     private void setVertexArray() {
         verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
-       
+        float xmin = POLY_OFFSET, ymax = WIN_HEIGHT - POLY_OFFSET, zmin = 0.0f, zmax = 0.0f,
+                xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
+        float uvmin = 0.0f, uvmax = 0.5f;
 
+        int index = 0;
+        int color_counter = 0;
+        int uv_counter = 0;
 
+        float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
+        float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
 
+        for (int row = 0; row < NUM_POLY_ROWS; row++) {
+            for (int col = 0; col < NUM_POLY_COLS; col++) {
+                float[] xyz_coords = {xmin,ymin,zmin, xmax,ymin,zmin, xmax,ymax,zmax, xmin,ymax,zmax};
+                for (float xyz_coordinate : xyz_coords) {
+                    if (color_counter == 3) {
+                        color_counter = 0;
+                        for (float color : vs_colors) {
+                            verticesArray[index++] = color;
+                        }
 
+                        verticesArray[index++] = uv_coords[uv_counter++];
+                        verticesArray[index++] = uv_coords[uv_counter++];
+
+                        if (uv_counter >= uv_coords.length) {
+                            uv_counter = 0;
+                        }
+                    }
+                    verticesArray[index++] = xyz_coordinate;
+                    color_counter++;
+                }
+                xmin = xmax + POLY_PADDING;
+                xmax = xmin + POLY_LENGTH;
+            }
+            xmin = POLY_OFFSET;
+            xmax = xmin + POLY_LENGTH;
+            ymax = ymin - POLY_PADDING;
+            ymin = ymax - POLY_LENGTH;
+        }
 
     }  // float[] setVertexArray(...)
 
@@ -77,10 +108,20 @@ public class slTilesManager {
     }  //  private void fillSquareCoordinates(int indx, int row, int col, float[] vert_array)
 
     public void setVertexIndicesArray() {
-        
+        vertexIndicesArray = new int[(NUM_POLY_ROWS * NUM_POLY_COLS) * ips];
+        int index = 0;
+        int v_index = 0;
 
+        while (index < vertexIndicesArray.length) {
+            vertexIndicesArray[index++] = v_index;
+            vertexIndicesArray[index++] = v_index + 1;
+            vertexIndicesArray[index++] = v_index + 2;
+            vertexIndicesArray[index++] = v_index;
+            vertexIndicesArray[index++] = v_index + 2;
+            vertexIndicesArray[index++] = v_index + 3;
 
-
+            v_index += vps;
+        }
     }  //  public int[] setVertexIndicesArray(...)
 
     public void updateForPolygonStatusChange(int row, int col, boolean printStats) {
@@ -157,8 +198,17 @@ public class slTilesManager {
     }
 
     public void printMineSweeperArray() {
-        
+        // Keep track of num of rows, new line if = num rows
+        int row_count = 0;
 
+        for (int i = 0; i < cellStatusArray.length; i++) {
+            if (row_count >= NUM_POLY_ROWS) {
+                row_count = 0;
+                System.out.println();
+            }
+            System.out.print(cellStatusArray[i]);
+            row_count++;
+        }
 
 
     }  //  public void printMineSweeperArray()
@@ -176,7 +226,8 @@ public class slTilesManager {
 
 
 
-        return retVec.set(NUM_POLY_ROWS-1-row, col);
+        // return retVec.set(NUM_POLY_ROWS-1-row, col); TODO: UNDO THIS COMMENT!
+        return null; // TODO: DELETE THIS LATER, THIS IS TEMPORARY!!!
     }
 
 }  //  public class slGeometryManager

@@ -1,4 +1,3 @@
-/*
 package SlRenderer;
 
 import org.joml.*;
@@ -74,5 +73,3 @@ public class slShaderManager {
     }  // private static void loadMatrix4f(String strMatrixName, Matrix4f my_mat4)
 
 }
-
- */
