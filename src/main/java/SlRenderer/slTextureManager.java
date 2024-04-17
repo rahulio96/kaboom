@@ -1,4 +1,3 @@
-/*
 package SlRenderer;
 
 // TODO:
@@ -75,5 +74,3 @@ class slTextureManager implements  TextureManagerInterface {
     }
 
 }
-
-*/

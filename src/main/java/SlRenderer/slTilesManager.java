@@ -11,10 +11,6 @@ public class slTilesManager {
     private float[] verticesArray;
     private int[] vertexIndicesArray;
 
-    private final int vps = 4; // Vertices Per Square
-    private final int fpv = 9;  // Vertices Per Vertex
-    private final int ips = 6; // Indices Per Square
-
     // 0 <-- gold & unexposed; GU, 1 <-- gold & exposed; GE,
     // 2 <-- mine & unexposed; MU, 3 <-- mine & exposed; ME.
     public static final int GU = 0;
@@ -64,18 +60,18 @@ public class slTilesManager {
         verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
         float xmin = POLY_OFFSET, ymax = WIN_HEIGHT - POLY_OFFSET, zmin = 0.0f, zmax = 0.0f,
                 xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
-        float uvmin = 0.0f, uvmax = 1.0f;
+        float uvmin = 0.0f, uvmax = 0.5f;
 
         int index = 0;
         int color_counter = 0;
         int uv_counter = 0;
-        float[] xyz_coords = {xmin,ymin,zmin, xmax,ymin,zmin, xmax,ymax,zmax, xmin,ymax,zmax};
+
         float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
         float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
 
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
-
+                float[] xyz_coords = {xmin,ymin,zmin, xmax,ymin,zmin, xmax,ymax,zmax, xmin,ymax,zmax};
                 for (float xyz_coordinate : xyz_coords) {
                     if (color_counter == 3) {
                         color_counter = 0;

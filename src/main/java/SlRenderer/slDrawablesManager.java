@@ -21,8 +21,13 @@ public class slDrawablesManager {
     private final float [] vertexArray = board_manager.getVertexArray();
     private final int[] vertexIndexArray = board_manager.getVertexIndicesArray();
     private slShaderManager shader;
+    private slTextureManager texture;
     private int vaoID, vboID, eboID;
     private final int vpoIndex = 0, vcoIndex = 1, vtoIndex = 2;
+
+    // 3 points for position (x, y, z)
+    // 4 points for color (r, g, b, a)
+    // 2 points for uv (uv, uv)
     private int positionStride = 3, colorStride = 4, textureStride = 2,
             vertexStride = (positionStride + colorStride + textureStride) * Float.BYTES;
 
@@ -37,9 +42,10 @@ public class slDrawablesManager {
         my_camera = new slCamera(new Vector3f(my_camera_location));
         my_camera.setOrthoProjection();
 
-        // TODO: CHANGE SHADERS TO texture_1.glsl
-        shader = new slShaderManager("vs_0.glsl", "fs_0.glsl");
+        shader = new slShaderManager("vs_texture_1.glsl", "fs_texture_1.glsl");
         shader.compile_shader();
+
+        texture = new slTextureManager(System.getProperty("user.dir") + "/assets/textures/FourTextures.png");
 
         vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
@@ -49,6 +55,7 @@ public class slDrawablesManager {
 
         vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
+        // GL_STATIC_DRAW good for now; we can later change to dynamic vertices:
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
 
         IntBuffer elementBuffer = BufferUtils.createIntBuffer(vertexIndexArray.length);
@@ -81,6 +88,7 @@ public class slDrawablesManager {
         //}
 
         shader.set_shader_program();
+        texture.bind_texture();
 
         shader.loadMatrix4f("uProjMatrix", my_camera.getProjectionMatrix());
         shader.loadMatrix4f("uViewMatrix", my_camera.getViewMatrix());
@@ -91,7 +99,11 @@ public class slDrawablesManager {
         glEnableVertexAttribArray(vcoIndex);
         glEnableVertexAttribArray(vtoIndex);
 
-        glDrawElements(GL_TRIANGLES, vertexIndexArray.length, GL_UNSIGNED_INT, 0);
+        long vertCount = 0;
+        for (int i = 0; i < NUM_POLY_COLS*NUM_POLY_ROWS; i++) {
+            glDrawElements(GL_TRIANGLES, ips, GL_UNSIGNED_INT, (vertCount * ips));
+            vertCount += vps;
+        }
 
         glDisableVertexAttribArray(vpoIndex);
         glDisableVertexAttribArray(vcoIndex);
@@ -99,6 +111,7 @@ public class slDrawablesManager {
 
         glBindVertexArray(0);
         shader.detach_shader();
+        texture.unbind_texture();
     }  //  public void update(int row, int col)
 
 }
