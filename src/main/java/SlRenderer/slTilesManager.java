@@ -62,6 +62,7 @@ public class slTilesManager {
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
                 fillSquareCoordinates(index, row, col, verticesArray);
+                alternateImages(row, col, 0); // TODO: REMOVE LATER, ONLY HERE FOR STEP 5
                 index += (vps * fpv);
             }
         }
@@ -78,11 +79,12 @@ public class slTilesManager {
         float xmin = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
         float ymax = WIN_HEIGHT - (POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING));
         float xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
-        float uvmin = 0.0f, uvmax = 0.5f;
 
         // Arrays with the correct orientation for xyz, colors, and uv
         float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
-        float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
+        float umin = GUTC[0], vmin = GUTC[1], umax = GUTC[2], vmax = GUTC[3];
+        float[] uv_coords = {umin,vmin, umax,vmin, umax,vmax, umin,vmax};
+
         float[] xyz_coords = {xmin,ymin,ZMIN, xmax,ymin,ZMIN, xmax,ymax,ZMIN, xmin,ymax,ZMIN};
 
         for (float xyz_coordinate : xyz_coords) {
@@ -120,6 +122,36 @@ public class slTilesManager {
             v_index += vps;
         }
     }  //  public int[] setVertexIndicesArray(...)
+
+    // For part 5 in the rubric (alternate images for first row)
+    public void alternateImages(int cur_row, int cur_col, int row) {
+        float umin = -1f, vmin = -1f, umax = -1f, vmax = -1f;
+        if (cur_row == row && cur_col % 2 == 0) {
+            umin = GETC[0];
+            vmin = GETC[1];
+            umax = GETC[2];
+            vmax = GETC[3];
+        } else if (cur_row == row) {
+            umin = 0.5f;
+            vmin = 0.5f;
+            umax = 0.0f;
+            vmax = 0.0f;
+        }
+        if (umin != -1f) {
+            int xyz_color_offset = 7;
+            int index = ((row * NUM_POLY_COLS + cur_col) * vps * fpv) + xyz_color_offset;
+            System.out.println(index);
+            float[] uv_coords = {umin,vmin, umax,vmin, umax,vmax, umin,vmax};
+            int uv_index = 0;
+            for (int i = 0; i < vps; i++) {
+                verticesArray[index++] = uv_coords[uv_index++];
+                verticesArray[index++] = uv_coords[uv_index++];
+                index += xyz_color_offset;
+            }
+
+        }
+
+    }
 
     public void updateForPolygonStatusChange(int row, int col, boolean printStats) {
         //locate the index to the verticesArray:
