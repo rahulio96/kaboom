@@ -58,52 +58,49 @@ public class slTilesManager {
     // Call fillSquarecoordinates for each cell array
     private void setVertexArray() {
         verticesArray = new float[(NUM_POLY_ROWS * NUM_POLY_COLS) * vps * fpv];
-        float xmin = POLY_OFFSET, ymax = WIN_HEIGHT - POLY_OFFSET, zmin = 0.0f, zmax = 0.0f,
-                xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
-        float uvmin = 0.0f, uvmax = 0.5f;
-
         int index = 0;
-        int color_counter = 0;
-        int uv_counter = 0;
-
-        float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
-        float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
-
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
-                float[] xyz_coords = {xmin,ymin,zmin, xmax,ymin,zmin, xmax,ymax,zmax, xmin,ymax,zmax};
-                for (float xyz_coordinate : xyz_coords) {
-                    if (color_counter == 3) {
-                        color_counter = 0;
-                        for (float color : vs_colors) {
-                            verticesArray[index++] = color;
-                        }
-
-                        verticesArray[index++] = uv_coords[uv_counter++];
-                        verticesArray[index++] = uv_coords[uv_counter++];
-
-                        if (uv_counter >= uv_coords.length) {
-                            uv_counter = 0;
-                        }
-                    }
-                    verticesArray[index++] = xyz_coordinate;
-                    color_counter++;
-                }
-                xmin = xmax + POLY_PADDING;
-                xmax = xmin + POLY_LENGTH;
+                fillSquareCoordinates(index, row, col, verticesArray);
+                index += (vps * fpv);
             }
-            xmin = POLY_OFFSET;
-            xmax = xmin + POLY_LENGTH;
-            ymax = ymin - POLY_PADDING;
-            ymin = ymax - POLY_LENGTH;
         }
 
     }  // float[] setVertexArray(...)
 
     // Given a index, row, column, fill up the vertices of the square. "index" is the index
     // to the vert_array, a multiple of vps * fpv
-    private void fillSquareCoordinates(int indx, int row, int col, float[] vert_array) {
-        
+    private void fillSquareCoordinates(int index, int row, int col, float[] vert_array) {
+        // Counters used to tell when to insert colors and uv coordinates
+        int color_counter = 0;
+        int uv_counter = 0;
+
+        float xmin = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
+        float ymax = WIN_HEIGHT - (POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING));
+        float xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
+        float uvmin = 0.0f, uvmax = 0.5f;
+
+        // Arrays with the correct orientation for xyz, colors, and uv
+        float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
+        float[] uv_coords = {uvmin,uvmax, uvmax,uvmax, uvmax,uvmin, uvmin,uvmin};
+        float[] xyz_coords = {xmin,ymin,ZMIN, xmax,ymin,ZMIN, xmax,ymax,ZMIN, xmin,ymax,ZMIN};
+
+        for (float xyz_coordinate : xyz_coords) {
+            vert_array[index++] = xyz_coordinate;
+            color_counter++;
+
+            // Once x,y,z are in vert_array, add the colors and uv coordinates
+            if (color_counter == 3) {
+                color_counter = 0;
+                for (float color : vs_colors) {
+                    vert_array[index++] = color;
+                }
+                // Loop through uv array so each vertex gets a coordinate pair
+                vert_array[index++] = uv_coords[uv_counter++];
+                vert_array[index++] = uv_coords[uv_counter++];
+            }
+        }
+
 
     }  //  private void fillSquareCoordinates(int indx, int row, int col, float[] vert_array)
 
