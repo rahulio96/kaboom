@@ -7,8 +7,7 @@ import javax.swing.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static SlRenderer.slTilesManager.GE;
-import static SlRenderer.slTilesManager.MU;
+import static SlRenderer.slTilesManager.*;
 import static csc133.spot.*;
 import static org.lwjgl.opengl.ARBVertexArrayObject.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -95,12 +94,13 @@ public class slDrawablesManager {
         shader.loadMatrix4f("uViewMatrix", my_camera.getViewMatrix());
 
         glBindVertexArray(vaoID);
-        if (row != -1 && col != -1) {
+        if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
             System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
-            board_manager.updateForPolygonStatusChange(row, col, true);
-            // if (board_manager.getCellStatus(row, col) != GE) {
+
+            if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
+                board_manager.updateForPolygonStatusChange(row, col, true);
                 glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
-            // }
+            }
             board_manager.printMineSweeperArray();
         }
 

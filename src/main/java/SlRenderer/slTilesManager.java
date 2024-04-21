@@ -176,8 +176,10 @@ public class slTilesManager {
             return;
         }
 
+        // TODO: LOGIC BOMB
         if (new_state == ME) {
             umin = METC[0]; umax = METC[1]; vmin = METC[2]; vmax = METC[3];
+            updateStatusArrayToDisplayAll();
         }
         cellStatusArray[row * NUM_POLY_COLS + col] = new_state;
 
@@ -211,11 +213,41 @@ public class slTilesManager {
     }
 
     public void updateStatusArrayToDisplayAll() {
-        
+        int xyz_color_offset = 7;
+        float umin = -1f, vmin = -1f, umax = -1f, vmax = -1f;
+        int vertex_i = 7;
+        for (int i = 0; i < cellStatusArray.length; i++) {
 
-
-
-
+            if (cellStatusArray[i] == GU) {
+                umin = GETC[0];
+                vmin = GETC[1];
+                umax = GETC[2];
+                vmax = GETC[3];
+                float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
+                int uv_index = 0;
+                for (int j = 0; j < vps; j++) {
+                    verticesArray[vertex_i++] = uv_coords[uv_index++];
+                    verticesArray[vertex_i++] = uv_coords[uv_index++];
+                    vertex_i += xyz_color_offset;
+                }
+            } else if (cellStatusArray[i] == MU) {
+                umin = METC[0];
+                vmin = METC[1];
+                umax = METC[2];
+                vmax = METC[3];
+                float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
+                int uv_index = 0;
+                for (int j = 0; j < vps; j++) {
+                    verticesArray[vertex_i++] = uv_coords[uv_index++];
+                    verticesArray[vertex_i++] = uv_coords[uv_index++];
+                    vertex_i += xyz_color_offset;
+                }
+            } else {
+                for (int j = 0; j < vps; j++) {
+                    vertex_i += fpv;
+                }
+            }
+        }
     }
 
     public float[] getVertexArray() {
