@@ -67,9 +67,8 @@ public class slWindow {
             throw new IllegalStateException("glfwCreateWindow(...) failed; bailing out!");
         }
 
-        // TODO: UNCOMMMENT THIS
-        // glfwSetCursorPosCallback(glfwWindow, slMouseListener::mousePosCallback);
-        // glfwSetMouseButtonCallback(glfwWindow, slMouseListener::mouseButtonCallback);
+        glfwSetCursorPosCallback(glfwWindow, slMouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(glfwWindow, slMouseListener::mouseButtonCallback);
 
         glfwMakeContextCurrent(glfwWindow);
         glfwSwapInterval(1);
@@ -85,14 +84,13 @@ public class slWindow {
         while (!glfwWindowShouldClose(glfwWindow)){
             glfwPollEvents();
             rcVec.set(-1, -1);
-            /* TODO: UNCOMMENT THIS
+
             if (slMouseListener.mouseButtonDown(0)) {
                 float xp = slMouseListener.getX();
                 float yp = slMouseListener.getY();
                 slMouseListener.mouseButtonDownReset(0);
                 rcVec = slTilesManager.getRowColFromXY(xp, yp);
             }  //  if (slMouseListener.mouseButtonDown(0))
-             */
 
             glClearColor(ccRed, ccGreen, ccBlue, ccAlpha);
             glClear(GL_COLOR_BUFFER_BIT);

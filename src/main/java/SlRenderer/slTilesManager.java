@@ -140,7 +140,6 @@ public class slTilesManager {
         if (umin != -1f) {
             int xyz_color_offset = 7;
             int index = ((row * NUM_POLY_COLS + cur_col) * vps * fpv) + xyz_color_offset;
-            System.out.println(index);
             float[] uv_coords = {umin,vmin, umax,vmin, umax,vmax, umin,vmax};
             int uv_index = 0;
             for (int i = 0; i < vps; i++) {
@@ -250,13 +249,21 @@ public class slTilesManager {
     // corresponding to the window coordinates and returns the updated retVec
     public static Vector2i getRowColFromXY(float xpos, float ypos) {
         Vector2i retVec = new Vector2i(-1, -1);
-     
-     
+        int row = (int) ((xpos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
+        int col = (int) ((ypos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
 
+        float xmink = POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING);
+        float xmaxk = xmink + POLY_LENGTH;
+        float ymink = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
+        float ymaxk = ymink + POLY_LENGTH;
 
+        if (xmink <= xpos && xpos <= xmaxk && ymink <= ypos && ypos <= ymaxk) {
+            System.out.println("SUCCESSFUL CLICK!!!!!!");
+        } else {
+            return retVec;
+        }
 
-        // return retVec.set(NUM_POLY_ROWS-1-row, col); TODO: UNDO THIS COMMENT!
-        return null; // TODO: DELETE THIS LATER, THIS IS TEMPORARY!!!
+        return retVec.set(NUM_POLY_ROWS-1-row, col);
     }
 
 }  //  public class slGeometryManager
