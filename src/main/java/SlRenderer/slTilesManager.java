@@ -231,7 +231,7 @@ public class slTilesManager {
         int row_count = 0;
 
         for (int i = 0; i < cellStatusArray.length; i++) {
-            if (row_count >= NUM_POLY_ROWS) {
+            if (row_count >= NUM_POLY_COLS) {
                 row_count = 0;
                 System.out.println();
             }
@@ -259,7 +259,7 @@ public class slTilesManager {
         float ymaxk = ymink + POLY_LENGTH;
 
         if (xpos >= xmink && xpos <= xmaxk && ypos >= ymink && ypos <= ymaxk) {
-            return retVec.set(NUM_POLY_ROWS-1-row, col);
+            return retVec.set(row, col);
         } else {
             return retVec;
         }
