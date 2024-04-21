@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static SlRenderer.slTilesManager.GE;
 import static SlRenderer.slTilesManager.MU;
 import static csc133.spot.*;
 import static org.lwjgl.opengl.ARBVertexArrayObject.*;
@@ -87,12 +88,6 @@ public class slDrawablesManager {
         //    glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
         //}
 
-        if (row != -1 && col != -1) {
-            System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
-            board_manager.updateForPolygonStatusChange(row, col, true);
-            board_manager.printMineSweeperArray();
-        }
-
         shader.set_shader_program();
         texture.bind_texture();
 
@@ -100,16 +95,20 @@ public class slDrawablesManager {
         shader.loadMatrix4f("uViewMatrix", my_camera.getViewMatrix());
 
         glBindVertexArray(vaoID);
+        if (row != -1 && col != -1) {
+            System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
+            board_manager.updateForPolygonStatusChange(row, col, true);
+            // if (board_manager.getCellStatus(row, col) != GE) {
+                glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
+            // }
+            board_manager.printMineSweeperArray();
+        }
 
         glEnableVertexAttribArray(vpoIndex);
         glEnableVertexAttribArray(vcoIndex);
         glEnableVertexAttribArray(vtoIndex);
 
-        long vertCount = 0;
-        for (int i = 0; i < NUM_POLY_COLS*NUM_POLY_ROWS; i++) {
-            glDrawElements(GL_TRIANGLES, ips, GL_UNSIGNED_INT, (vertCount * ips));
-            vertCount += vps;
-        }
+        glDrawElements(GL_TRIANGLES, vertexIndexArray.length, GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(vpoIndex);
         glDisableVertexAttribArray(vcoIndex);
