@@ -212,36 +212,25 @@ public class slTilesManager {
         return cellStatusArray[row * NUM_POLY_COLS + col];
     }
 
-    public void updateStatusArrayToDisplayAll() {
+    private int changeSquareTexture(int index, float umin, float vmin, float umax, float vmax) {
         int xyz_color_offset = 7;
-        float umin = -1f, vmin = -1f, umax = -1f, vmax = -1f;
+        float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
+        int uv_index = 0;
+        for (int j = 0; j < vps; j++) {
+            verticesArray[index++] = uv_coords[uv_index++];
+            verticesArray[index++] = uv_coords[uv_index++];
+            index += xyz_color_offset;
+        }
+        return index;
+    }
+
+    public void updateStatusArrayToDisplayAll() {
         int vertex_i = 7;
         for (int i = 0; i < cellStatusArray.length; i++) {
-
             if (cellStatusArray[i] == GU) {
-                umin = GETC[0];
-                vmin = GETC[1];
-                umax = GETC[2];
-                vmax = GETC[3];
-                float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
-                int uv_index = 0;
-                for (int j = 0; j < vps; j++) {
-                    verticesArray[vertex_i++] = uv_coords[uv_index++];
-                    verticesArray[vertex_i++] = uv_coords[uv_index++];
-                    vertex_i += xyz_color_offset;
-                }
+                vertex_i = changeSquareTexture(vertex_i, GETC[0], GETC[1], GETC[2], GETC[3]);
             } else if (cellStatusArray[i] == MU) {
-                umin = METC[0];
-                vmin = METC[1];
-                umax = METC[2];
-                vmax = METC[3];
-                float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
-                int uv_index = 0;
-                for (int j = 0; j < vps; j++) {
-                    verticesArray[vertex_i++] = uv_coords[uv_index++];
-                    verticesArray[vertex_i++] = uv_coords[uv_index++];
-                    vertex_i += xyz_color_offset;
-                }
+                vertex_i = changeSquareTexture(vertex_i, METC[0], METC[1], METC[2], METC[3]);
             } else {
                 for (int j = 0; j < vps; j++) {
                     vertex_i += fpv;
