@@ -87,6 +87,12 @@ public class slDrawablesManager {
         //    glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
         //}
 
+        if (row != -1 && col != -1) {
+            System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
+            board_manager.updateForPolygonStatusChange(row, col, true);
+            board_manager.printMineSweeperArray();
+        }
+
         shader.set_shader_program();
         texture.bind_texture();
 

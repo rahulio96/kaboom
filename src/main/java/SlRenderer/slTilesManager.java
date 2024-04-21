@@ -62,7 +62,7 @@ public class slTilesManager {
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
                 fillSquareCoordinates(index, row, col, verticesArray);
-                alternateImages(row, col, 0); // TODO: REMOVE LATER, ONLY HERE FOR STEP 5
+                //alternateImages(row, col, 0); // TODO: REMOVE LATER, ONLY HERE FOR STEP 5
                 index += (vps * fpv);
             }
         }
@@ -152,6 +152,7 @@ public class slTilesManager {
 
     }
 
+    // TODO: MODIFY THIS TO MAKE IT SOMEWHAT MATCH ABOVE CODE!
     public void updateForPolygonStatusChange(int row, int col, boolean printStats) {
         //locate the index to the verticesArray:
         int fps = vps * fpv; //Floats Per Square
@@ -249,21 +250,21 @@ public class slTilesManager {
     // corresponding to the window coordinates and returns the updated retVec
     public static Vector2i getRowColFromXY(float xpos, float ypos) {
         Vector2i retVec = new Vector2i(-1, -1);
-        int row = (int) ((xpos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
-        int col = (int) ((ypos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
+        int col = (int) ((xpos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
+        int row = (int) ((ypos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
 
-        float xmink = POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING);
+        float xmink = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
         float xmaxk = xmink + POLY_LENGTH;
-        float ymink = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
+        float ymink = POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING);
         float ymaxk = ymink + POLY_LENGTH;
 
-        if (xmink <= xpos && xpos <= xmaxk && ymink <= ypos && ypos <= ymaxk) {
-            System.out.println("SUCCESSFUL CLICK!!!!!!");
+        if (xpos >= xmink && xpos <= xmaxk && ypos >= ymink && ypos <= ymaxk) {
+            return retVec.set(NUM_POLY_ROWS-1-row, col);
         } else {
             return retVec;
         }
 
-        return retVec.set(NUM_POLY_ROWS-1-row, col);
+
     }
 
 }  //  public class slGeometryManager
