@@ -123,7 +123,7 @@ public class slTilesManager {
         }
     }  //  public int[] setVertexIndicesArray(...)
 
-    // For part 5 in the rubric (alternate images for first row)
+    /* For part 5 in the rubric (alternate images for first row)
     public void alternateImages(int cur_row, int cur_col, int row) {
         float umin = -1f, vmin = -1f, umax = -1f, vmax = -1f;
         if (cur_row == row && cur_col % 2 == 0) {
@@ -147,10 +147,8 @@ public class slTilesManager {
                 verticesArray[index++] = uv_coords[uv_index++];
                 index += xyz_color_offset;
             }
-
         }
-
-    }
+    }*/
 
     // TODO: MODIFY THIS TO MAKE IT SOMEWHAT MATCH ABOVE CODE!
     public void updateForPolygonStatusChange(int row, int col, boolean printStats) {
@@ -197,15 +195,12 @@ public class slTilesManager {
     }
 
     private void printStats() {
-        
+
     }
 
     // status can be GE, ME, GU, MU
     public void setCellStatus(int row, int col, int status) {
-        
-
-
-
+        cellStatusArray[row * NUM_POLY_COLS + col] = status;
     }  //  public void setCellStatus(int row, int col, int status)
 
     public int getCellStatus(int row, int col) {

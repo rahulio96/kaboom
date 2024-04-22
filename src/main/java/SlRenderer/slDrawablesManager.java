@@ -24,6 +24,7 @@ public class slDrawablesManager {
     private slTextureManager texture;
     private int vaoID, vboID, eboID;
     private final int vpoIndex = 0, vcoIndex = 1, vtoIndex = 2;
+    private static boolean isGameOver = false;
 
     // 3 points for position (x, y, z)
     // 4 points for color (r, g, b, a)
@@ -39,6 +40,8 @@ public class slDrawablesManager {
     }
 
     private void initRendering() {
+        board_manager.printMineSweeperArray();
+
         my_camera = new slCamera(new Vector3f(my_camera_location));
         my_camera.setOrthoProjection();
 
@@ -94,14 +97,19 @@ public class slDrawablesManager {
         shader.loadMatrix4f("uViewMatrix", my_camera.getViewMatrix());
 
         glBindVertexArray(vaoID);
-        if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
-            System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
+        if (!isGameOver) {
+            if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
+                System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
 
-            if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
-                board_manager.updateForPolygonStatusChange(row, col, true);
-                glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
+                if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
+                    board_manager.updateForPolygonStatusChange(row, col, true);
+                    glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
+                    if (board_manager.getCellStatus(row, col) == ME) {
+                        isGameOver = true;
+                    }
+                }
+                board_manager.printMineSweeperArray();
             }
-            board_manager.printMineSweeperArray();
         }
 
         glEnableVertexAttribArray(vpoIndex);
