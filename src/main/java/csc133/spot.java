@@ -13,6 +13,14 @@ public class spot {
     public static float FRUSTUM_LEFT = 0.0f, FRUSTUM_RIGHT = (float) WIN_WIDTH, FRUSTUM_BOTTOM = 0.0f,
             FRUSTUM_TOP = (float) WIN_HEIGHT, Z_NEAR = 0.0f, Z_FAR = 10.0f;
     public static int TOTAL_MINES = 4;
+    public static int TOTAL_GOLD = NUM_POLY_COLS * NUM_POLY_ROWS - TOTAL_MINES;
+
+    // 0 <-- gold & unexposed; GU, 1 <-- gold & exposed; GE,
+    // 2 <-- mine & unexposed; MU, 3 <-- mine & exposed; ME.
+    public static final int GU = 0;
+    public static final int GE = 1;
+    public static final int MU = 2;
+    public static final int ME = 3;
     public static void print_legalese() {
         System.out.println("Legal Stuff");
     }

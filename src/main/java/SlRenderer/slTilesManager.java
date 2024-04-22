@@ -11,12 +11,6 @@ public class slTilesManager {
     private float[] verticesArray;
     private int[] vertexIndicesArray;
 
-    // 0 <-- gold & unexposed; GU, 1 <-- gold & exposed; GE,
-    // 2 <-- mine & unexposed; MU, 3 <-- mine & exposed; ME.
-    public static final int GU = 0;
-    public static final int GE = 1;
-    public static final int MU = 2;
-    public static final int ME = 3;
     // Precomputed Texture Coordinates for the above states - tied to how textures are tiled:
                                        //umin, vmin, umax, vmax
     private static final float[] GUTC = {0.5f, 0.5f, 1.0f, 0.0f};
@@ -25,6 +19,8 @@ public class slTilesManager {
     private static final float[] METC = {0.5f, 1.0f, 1.0f, 0.5f};
 
     private int[] cellStatusArray;
+    private static int exposed_gold = 0;
+    private static int unexposed_gold = TOTAL_GOLD;
     private int[] cellStats;  // {exposed gold - unexposed gold - mines} - in that order.
     // < 0 --> game in progress, 0 --> ended on gold, 1 --> ended on a mine, 2 --> game ended.
     private int boardDisplayStatus = -1;
@@ -62,7 +58,6 @@ public class slTilesManager {
         for (int row = 0; row < NUM_POLY_ROWS; row++) {
             for (int col = 0; col < NUM_POLY_COLS; col++) {
                 fillSquareCoordinates(index, row, col, verticesArray);
-                alternateImages(row, col, 0); // TODO: REMOVE LATER, ONLY HERE FOR STEP 5
                 index += (vps * fpv);
             }
         }
@@ -123,36 +118,6 @@ public class slTilesManager {
         }
     }  //  public int[] setVertexIndicesArray(...)
 
-    // For part 5 in the rubric (alternate images for first row)
-    public void alternateImages(int cur_row, int cur_col, int row) {
-        float umin = -1f, vmin = -1f, umax = -1f, vmax = -1f;
-        if (cur_row == row && cur_col % 2 == 0) {
-            umin = GETC[0];
-            vmin = GETC[1];
-            umax = GETC[2];
-            vmax = GETC[3];
-        } else if (cur_row == row) {
-            umin = 0.5f;
-            vmin = 0.5f;
-            umax = 0.0f;
-            vmax = 0.0f;
-        }
-        if (umin != -1f) {
-            int xyz_color_offset = 7;
-            int index = ((row * NUM_POLY_COLS + cur_col) * vps * fpv) + xyz_color_offset;
-            System.out.println(index);
-            float[] uv_coords = {umin,vmin, umax,vmin, umax,vmax, umin,vmax};
-            int uv_index = 0;
-            for (int i = 0; i < vps; i++) {
-                verticesArray[index++] = uv_coords[uv_index++];
-                verticesArray[index++] = uv_coords[uv_index++];
-                index += xyz_color_offset;
-            }
-
-        }
-
-    }
-
     public void updateForPolygonStatusChange(int row, int col, boolean printStats) {
         //locate the index to the verticesArray:
         int fps = vps * fpv; //Floats Per Square
@@ -162,22 +127,37 @@ public class slTilesManager {
         float umin = GETC[0], vmin = GETC[1], umax = GETC[2], vmax = GETC[3];
         int old_state = cellStatusArray[row * NUM_POLY_COLS + col];
         int new_state = -1;
+        // If we clicked gold, do the following
         if (old_state == GU ) {
+            exposed_gold++;
+            unexposed_gold--;
             new_state = GE;
             ++cellStats[0];
             --cellStats[1];
+
             if (printStats && boardDisplayStatus < 0) {
                 printStats();
             }
+
+            // Win condition, player collects all gold
+            if (cellStats[1] == 0) {
+                boardDisplayStatus = 2;
+                System.out.println("GAME OVER, SUCCESS!");
+            }
             // tex coords set to this by default - no need to update
+
+        // Lose condition, player clicks on a mine!
         } else if (old_state == MU) {
             new_state = ME;
+            boardDisplayStatus = 1;
+            System.out.println("GAME OVER, KABOOM!");
         } else {
             return;
         }
 
         if (new_state == ME) {
             umin = METC[0]; umax = METC[1]; vmin = METC[2]; vmax = METC[3];
+            updateStatusArrayToDisplayAll();
         }
         cellStatusArray[row * NUM_POLY_COLS + col] = new_state;
 
@@ -195,27 +175,45 @@ public class slTilesManager {
     }
 
     private void printStats() {
-        
+        System.out.println(cellStats[0] + " " + cellStats[1] + " " + cellStats[2]);
     }
 
     // status can be GE, ME, GU, MU
     public void setCellStatus(int row, int col, int status) {
-        
-
-
-
+        cellStatusArray[row * NUM_POLY_COLS + col] = status;
     }  //  public void setCellStatus(int row, int col, int status)
 
     public int getCellStatus(int row, int col) {
         return cellStatusArray[row * NUM_POLY_COLS + col];
     }
 
+    private int changeSquareTexture(int index, float umin, float vmin, float umax, float vmax) {
+        int xyz_color_offset = 7;
+        float[] uv_coords = {umin, vmin, umax, vmin, umax, vmax, umin, vmax};
+        int uv_index = 0;
+        for (int j = 0; j < vps; j++) {
+            verticesArray[index++] = uv_coords[uv_index++];
+            verticesArray[index++] = uv_coords[uv_index++];
+            index += xyz_color_offset;
+        }
+        return index;
+    }
+
     public void updateStatusArrayToDisplayAll() {
-        
-
-
-
-
+        int vertex_i = 7;
+        for (int i = 0; i < cellStatusArray.length; i++) {
+            if (cellStatusArray[i] == GU) {
+                cellStatusArray[i] = GE;
+                vertex_i = changeSquareTexture(vertex_i, GETC[0], GETC[1], GETC[2], GETC[3]);
+            } else if (cellStatusArray[i] == MU) {
+                cellStatusArray[i] = ME;
+                vertex_i = changeSquareTexture(vertex_i, METC[0], METC[1], METC[2], METC[3]);
+            } else {
+                for (int j = 0; j < vps; j++) {
+                    vertex_i += fpv;
+                }
+            }
+        }
     }
 
     public float[] getVertexArray() {
@@ -230,15 +228,15 @@ public class slTilesManager {
         // Keep track of num of rows, new line if = num rows
         int row_count = 0;
 
-        for (int i = 0; i < cellStatusArray.length; i++) {
-            if (row_count >= NUM_POLY_ROWS) {
+        for (int cell : cellStatusArray) {
+            if (row_count >= NUM_POLY_COLS) {
                 row_count = 0;
                 System.out.println();
             }
-            System.out.print(cellStatusArray[i]);
+            System.out.print(cell);
             row_count++;
         }
-
+        System.out.println("\n");
 
     }  //  public void printMineSweeperArray()
 
@@ -250,13 +248,21 @@ public class slTilesManager {
     // corresponding to the window coordinates and returns the updated retVec
     public static Vector2i getRowColFromXY(float xpos, float ypos) {
         Vector2i retVec = new Vector2i(-1, -1);
-     
-     
+        int col = (int) ((xpos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
+        int row = (int) ((ypos - POLY_OFFSET) / (POLY_LENGTH + POLY_PADDING));
+
+        float xmink = POLY_OFFSET + col * (POLY_LENGTH + POLY_PADDING);
+        float xmaxk = xmink + POLY_LENGTH;
+        float ymink = POLY_OFFSET + row * (POLY_LENGTH + POLY_PADDING);
+        float ymaxk = ymink + POLY_LENGTH;
+
+        if (xpos >= xmink && xpos <= xmaxk && ypos >= ymink && ypos <= ymaxk) {
+            return retVec.set(row, col);
+        } else {
+            return retVec;
+        }
 
 
-
-        // return retVec.set(NUM_POLY_ROWS-1-row, col); TODO: UNDO THIS COMMENT!
-        return null; // TODO: DELETE THIS LATER, THIS IS TEMPORARY!!!
     }
 
 }  //  public class slGeometryManager

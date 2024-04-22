@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import static SlRenderer.slTilesManager.MU;
+import static SlRenderer.slTilesManager.*;
 import static csc133.spot.*;
 import static org.lwjgl.opengl.ARBVertexArrayObject.*;
 import static org.lwjgl.opengl.GL20.*;
@@ -24,6 +24,7 @@ public class slDrawablesManager {
     private slTextureManager texture;
     private int vaoID, vboID, eboID;
     private final int vpoIndex = 0, vcoIndex = 1, vtoIndex = 2;
+    private static boolean isGameOver = false;
 
     // 3 points for position (x, y, z)
     // 4 points for color (r, g, b, a)
@@ -39,6 +40,8 @@ public class slDrawablesManager {
     }
 
     private void initRendering() {
+        board_manager.printMineSweeperArray();
+
         my_camera = new slCamera(new Vector3f(my_camera_location));
         my_camera.setOrthoProjection();
 
@@ -95,15 +98,19 @@ public class slDrawablesManager {
 
         glBindVertexArray(vaoID);
 
+        // Update vertices array before drawing
+        if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
+            if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
+                board_manager.updateForPolygonStatusChange(row, col, true);
+                glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
+            }
+        }
+
         glEnableVertexAttribArray(vpoIndex);
         glEnableVertexAttribArray(vcoIndex);
         glEnableVertexAttribArray(vtoIndex);
 
-        long vertCount = 0;
-        for (int i = 0; i < NUM_POLY_COLS*NUM_POLY_ROWS; i++) {
-            glDrawElements(GL_TRIANGLES, ips, GL_UNSIGNED_INT, (vertCount * ips));
-            vertCount += vps;
-        }
+        glDrawElements(GL_TRIANGLES, vertexIndexArray.length, GL_UNSIGNED_INT, 0);
 
         glDisableVertexAttribArray(vpoIndex);
         glDisableVertexAttribArray(vcoIndex);
