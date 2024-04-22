@@ -97,18 +97,12 @@ public class slDrawablesManager {
         shader.loadMatrix4f("uViewMatrix", my_camera.getViewMatrix());
 
         glBindVertexArray(vaoID);
-        if (!isGameOver) {
-            if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
-                System.out.println("\nCLICKED ROW: " + row + " COL: " + col);
 
-                if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
-                    board_manager.updateForPolygonStatusChange(row, col, true);
-                    glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
-                    if (board_manager.getCellStatus(row, col) == ME) {
-                        isGameOver = true;
-                    }
-                }
-                board_manager.printMineSweeperArray();
+        // Update vertices array before drawing
+        if (row != -1 && col != -1 && board_manager.getCellStatus(row, col) != GE) {
+            if (board_manager.getCellStatus(row, col) == GU || board_manager.getCellStatus(row, col) == MU) {
+                board_manager.updateForPolygonStatusChange(row, col, true);
+                glBufferData(GL_ARRAY_BUFFER, vertexArray, GL_DYNAMIC_DRAW);
             }
         }
 

@@ -1,6 +1,5 @@
 package csc133;
 
-import SlRenderer.slTilesManager;
 import SlRenderer.slWindow;
 
 import static csc133.spot.TOTAL_MINES;
