@@ -76,7 +76,7 @@ public class slTilesManager {
         float xmax = xmin + POLY_LENGTH, ymin = ymax - POLY_LENGTH;
 
         // Arrays with the correct orientation for xyz, colors, and uv
-        float[] vs_colors = {0.0f, 0.0f, 1.0f, 1.0f};
+        float[] vs_colors = {1.0f, 1.0f, 1.0f, 1.0f};
         float umin = GUTC[0], vmin = GUTC[1], umax = GUTC[2], vmax = GUTC[3];
         float[] uv_coords = {umin,vmin, umax,vmin, umax,vmax, umin,vmax};
 

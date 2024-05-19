@@ -9,5 +9,5 @@ out vec4 color;
 
 void main()
 {
-    color = fColor * 0.7f + texture(TEX_SAMPLER, fTexCoords);
+    color = fColor * 0.17f + texture(TEX_SAMPLER, fTexCoords);
 }
